@@ -1,0 +1,153 @@
+swagger: "2.0"
+info:
+  title: API
+  description: Busqueda microservicio
+  version: 1.0.0
+host: host:6007
+basePath: /go/src/go-with-compose
+schemes:
+  - https
+paths:
+  /categorias:
+    get:
+      summary: get all categorias.
+      description: getCategorias.
+      responses:
+        200:
+          description: OK
+        500:
+          description: Internal Server Error
+  /categoria:
+    post:
+      summary: Create new categoria.
+      description: CreateCategoria.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        500:
+          description: Internal Server Error
+  /categoria{id}:
+    get:
+      summary: Return a categoria.
+      description: getCategoria.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+    put:
+      summary: Update a categoria.
+      description: updateCategoria.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+    delete:
+      summary: Delete a categoria.
+      description: deleteCategoria.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+  /productos:
+    get:
+      summary: get all productos.
+      description: getProductos.
+      responses:
+        200:
+          description: OK
+        500:
+          description: Internal Server Error
+  /producto:
+    post:
+      summary: Create new producto.
+      description: CreateProducto.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        500:
+          description: Internal Server Error
+  /producto{id}:
+    get:
+      summary: Return a producto.
+      description: getProducto.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+    put:
+      summary: Update a producto.
+      description: updateProducto.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+    delete:
+      summary: Delete a producto.
+      description: deleteProducto.
+      responses:
+        200:
+          description: OK
+        400:
+          description: Bad Request
+        406:
+          description: Not Acceptable (Invalid Params)
+        500:
+          description: Internal Server Error
+
+definitions:
+  Categoria:
+    type: object
+    properties:
+      ID:
+        type: integer
+      NombreCategoria:
+        type: string
+      TipoCategoria:
+        type: string
+  App:
+    type: object
+    properties:
+      Router:
+        type: object
+      DB:
+        type: object
+  producto:
+    type: object
+    properties:
+      ID:
+        type: integer
+      CategoriaID:
+        type: integer
+      Nombre:
+        type: string
+      Descripcion:
+        type: string
