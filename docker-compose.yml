@@ -1,8 +1,9 @@
+
 version: '3.3'
 services:
-  perime-busqueda-ms:
+  perime-search-ms:
     image: golang:latest
-    container_name: perime-busqueda-ms
+    container_name: perime-search-ms
     volumes:
       - .:/go/src/go-with-compose
     working_dir: /go/src/go-with-compose
@@ -13,15 +14,15 @@ services:
       && go run main.go
       "
     ports:
-      - "33061:33061"
+      - "1859:1859"
     depends_on:
-      - perime-busqueda-db
-  perime-busqueda-db:
+      - perime-search-db
+  perime-search-db:
     image: mariadb:latest
-    container_name: perime-busqueda-db
+    container_name: perime-search-db
     restart: always
     environment:
-      MYSQL_DATABASE: 'busqueda-db'
+      MYSQL_DATABASE: 'perime-search-db'
       # So you don't have to use root, but you can if you like
       MYSQL_USER: 'user'
       # You can use whatever password you like
@@ -30,13 +31,13 @@ services:
       MYSQL_ROOT_PASSWORD: 'password'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
+      - '60001:60001'
     expose:
-      # Opens port 3306 on the container
-      - '3306'
+      # Opens port 60001 on the container
+      - '60001'
       # Where our data will be persisted
     volumes:
-      - busqueda-db:/var/lib/mariadb
+      - perime-search-db:/var/lib/mariadb
 # Names our volume
 volumes:
-  busqueda-db:
+  perime-search-db:

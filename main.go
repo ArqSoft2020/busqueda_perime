@@ -14,11 +14,12 @@ import (
 
 //main
 func main() {
-	a := App{} 
-    // You need to set your Username and Password here
-    a.Initialize("root", "password", "perime-busqueda-db", "busqueda-db")
+	a := App{}
+	// You need to set your Username and Password here
+	// user - password- name container - name db
+	a.Initialize("root", "password", "perime-search-db", "perime-search-db")
 
-    a.Run(":33061")
+	a.Run(":1859")
 
 }
 
@@ -28,7 +29,7 @@ type App struct {
 }
 
 func (a *App) Initialize(user, password, dockername string, dbname string) {
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password,dockername, dbname)
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, dockername, dbname)
 
 	var err error
 	a.DB, err = sql.Open("mysql", connectionString)
@@ -46,18 +47,19 @@ func (a *App) Run(addr string) {
 
 func (a *App) initializeRoutes() {
 	//Categoria
-	a.Router.HandleFunc("/categorias", a.getCategorias).Methods("GET")
-	a.Router.HandleFunc("/categoria", a.createCategoria).Methods("POST")
-	a.Router.HandleFunc("/categoria/{id:[0-9]+}", a.getCategoria).Methods("GET")
-	a.Router.HandleFunc("/categoria/{id:[0-9]+}", a.updateCategoria).Methods("PUT")
-	a.Router.HandleFunc("/categoria/{id:[0-9]+}", a.deleteCategoria).Methods("DELETE")
+	a.Router.HandleFunc("/categorys", a.getCategorys).Methods("GET")
+	a.Router.HandleFunc("/category", a.createCategory).Methods("POST")
+	a.Router.HandleFunc("/category/{id:[0-9]+}", a.getCategory).Methods("GET")
+	a.Router.HandleFunc("/category/{id:[0-9]+}", a.updateCategory).Methods("PUT")
+	a.Router.HandleFunc("/category/{id:[0-9]+}", a.deleteCategory).Methods("DELETE")
 	//Producto
-	a.Router.HandleFunc("/productos", a.getProductos).Methods("GET")
-	a.Router.HandleFunc("/producto", a.createProducto).Methods("POST")
-	a.Router.HandleFunc("/producto/{id:[0-9]+}", a.getProducto).Methods("GET")
-	a.Router.HandleFunc("/producto/{id:[0-9]+}", a.updateProducto).Methods("PUT")
-	a.Router.HandleFunc("/producto/{id:[0-9]+}", a.deleteProducto).Methods("DELETE")
+	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
+	a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.getProduct).Methods("GET")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.updateProduct).Methods("PUT")
+	a.Router.HandleFunc("/product/{id:[0-9]+}", a.deleteProduct).Methods("DELETE")
 }
+
 ///bloquejson
 //manejo de error
 func respondWithError(w http.ResponseWriter, code int, message string) {
@@ -71,9 +73,10 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	w.Write(response)
 }
+
 //bloquejson
 
-func (a *App) getCategorias(w http.ResponseWriter, r *http.Request) {
+func (a *App) getCategorys(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
@@ -84,7 +87,7 @@ func (a *App) getCategorias(w http.ResponseWriter, r *http.Request) {
 		start = 0
 	}
 
-	products, err := getCategorias(a.DB, start, count)
+	products, err := getCategorys(a.DB, start, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -93,8 +96,8 @@ func (a *App) getCategorias(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, products)
 }
 
-func (a *App) createCategoria(w http.ResponseWriter, r *http.Request) {
-	var u categoria
+func (a *App) createCategory(w http.ResponseWriter, r *http.Request) {
+	var u category
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -102,7 +105,7 @@ func (a *App) createCategoria(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := u.createCategoria(a.DB); err != nil {
+	if err := u.createCategory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -110,16 +113,16 @@ func (a *App) createCategoria(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, u)
 }
 
-func (a *App) getCategoria(w http.ResponseWriter, r *http.Request) {
+func (a *App) getCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid categoria ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid category ID")
 		return
 	}
 
-	u := categoria{ID: id}
-	if err := u.getCategoria(a.DB); err != nil {
+	u := category{ID: id}
+	if err := u.getCategory(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Categoria not found press f")
@@ -132,15 +135,15 @@ func (a *App) getCategoria(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, u)
 }
 
-func (a *App) updateCategoria(w http.ResponseWriter, r *http.Request) {
+func (a *App) updateCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid categoria ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid category ID")
 		return
 	}
 
-	var u categoria
+	var u category
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -149,7 +152,7 @@ func (a *App) updateCategoria(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	u.ID = id
 
-	if err := u.updateCategoria(a.DB); err != nil {
+	if err := u.updateCategory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -157,7 +160,7 @@ func (a *App) updateCategoria(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, u)
 }
 
-func (a *App) deleteCategoria(w http.ResponseWriter, r *http.Request) {
+func (a *App) deleteCategory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -165,8 +168,8 @@ func (a *App) deleteCategoria(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u := categoria{ID: id}
-	if err := u.deleteCategoria(a.DB); err != nil {
+	u := category{ID: id}
+	if err := u.deleteCategory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -174,33 +177,32 @@ func (a *App) deleteCategoria(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-
-//model categoria
-type categoria struct {
-	ID   int    `json:"id"`
-	NombreCategoria  string `json:"nombrecategoria"`
-	TipoCategoria   string `json:"tipocategoria"`
+//model category
+type category struct {
+	ID            int    `json:"id_category"`
+	Name_Category string `json:"name_category"`
+	Type_Category string `json:"type_category "`
 }
 
-func (u *categoria) getCategoria(db *sql.DB) error {
-	statement := fmt.Sprintf("SELECT NombreCategoria, TipoCategoria FROM categorias WHERE id=%d", u.ID)
-	return db.QueryRow(statement).Scan(&u.NombreCategoria, &u.TipoCategoria)
+func (u *category) getCategory(db *sql.DB) error {
+	statement := fmt.Sprintf("SELECT Name_Category, Type_Category FROM categorys WHERE id=%d", u.ID)
+	return db.QueryRow(statement).Scan(&u.Name_Category, &u.Type_Category)
 }
 
-func (u *categoria) updateCategoria(db *sql.DB) error {
-	statement := fmt.Sprintf("UPDATE categorias SET NombreCategoria='%s', TipoCategoria='%s' WHERE id=%d", u.NombreCategoria, u.TipoCategoria, u.ID)
+func (u *category) updateCategory(db *sql.DB) error {
+	statement := fmt.Sprintf("UPDATE categorys SET Name_Category='%s', Type_Category='%s' WHERE id=%d", u.Name_Category, u.Type_Category, u.ID)
 	_, err := db.Exec(statement)
 	return err
 }
 
-func (u *categoria) deleteCategoria(db *sql.DB) error {
-	statement := fmt.Sprintf("DELETE FROM categorias WHERE id=%d", u.ID)
+func (u *category) deleteCategory(db *sql.DB) error {
+	statement := fmt.Sprintf("DELETE FROM categorys WHERE id=%d", u.ID)
 	_, err := db.Exec(statement)
 	return err
 }
 
-func (u *categoria) createCategoria(db *sql.DB) error {
-	statement := fmt.Sprintf("INSERT INTO categorias(NombreCategoria, TipoCategoria) VALUES('%s', '%s')", u.NombreCategoria, u.TipoCategoria)
+func (u *category) createCategory(db *sql.DB) error {
+	statement := fmt.Sprintf("INSERT INTO categorys(Name_Category, Type_Category) VALUES('%s', '%s')", u.Name_Category, u.Type_Category)
 	_, err := db.Exec(statement)
 
 	if err != nil {
@@ -216,8 +218,8 @@ func (u *categoria) createCategoria(db *sql.DB) error {
 	return nil
 }
 
-func getCategorias(db *sql.DB, start, count int) ([]categoria, error) {
-	statement := fmt.Sprintf("SELECT id, NombreCategoria, TipoCategoria FROM categorias LIMIT %d OFFSET %d", count, start)
+func getCategorys(db *sql.DB, start, count int) ([]category, error) {
+	statement := fmt.Sprintf("SELECT id, Name_Category, Type_Category FROM categorys LIMIT %d OFFSET %d", count, start)
 	rows, err := db.Query(statement)
 
 	if err != nil {
@@ -226,21 +228,21 @@ func getCategorias(db *sql.DB, start, count int) ([]categoria, error) {
 
 	defer rows.Close()
 
-	categorias := []categoria{}
+	categorys := []category{}
 
 	for rows.Next() {
-		var u categoria
-		if err := rows.Scan(&u.ID, &u.NombreCategoria, &u.TipoCategoria); err != nil {
+		var u category
+		if err := rows.Scan(&u.ID, &u.Name_Category, &u.Type_Category); err != nil {
 			return nil, err
 		}
-		categorias = append(categorias, u)
+		categorys = append(categorys, u)
 	}
 
-	return categorias, nil
+	return categorys, nil
 }
 
-//producto
-func (a *App) getProductos(w http.ResponseWriter, r *http.Request) {
+//product
+func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
@@ -251,7 +253,7 @@ func (a *App) getProductos(w http.ResponseWriter, r *http.Request) {
 		start = 0
 	}
 
-	products, err := getProductos(a.DB, start, count)
+	products, err := getProducts(a.DB, start, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -260,8 +262,8 @@ func (a *App) getProductos(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, products)
 }
 
-func (a *App) createProducto(w http.ResponseWriter, r *http.Request) {
-	var u producto
+func (a *App) createProduct(w http.ResponseWriter, r *http.Request) {
+	var u product
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -269,7 +271,7 @@ func (a *App) createProducto(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := u.createProducto(a.DB); err != nil {
+	if err := u.createProduct(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -277,16 +279,16 @@ func (a *App) createProducto(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, u)
 }
 
-func (a *App) getProducto(w http.ResponseWriter, r *http.Request) {
+func (a *App) getProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid producto ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
-	u := producto{ID: id}
-	if err := u.getProducto(a.DB); err != nil {
+	u := product{ID: id}
+	if err := u.getProduct(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Producto not found press f")
@@ -299,15 +301,15 @@ func (a *App) getProducto(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, u)
 }
 
-func (a *App) updateProducto(w http.ResponseWriter, r *http.Request) {
+func (a *App) updateProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid producto ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
 		return
 	}
 
-	var u producto
+	var u product
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -316,7 +318,7 @@ func (a *App) updateProducto(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	u.ID = id
 
-	if err := u.updateProducto(a.DB); err != nil {
+	if err := u.updateProduct(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -324,7 +326,7 @@ func (a *App) updateProducto(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, u)
 }
 
-func (a *App) deleteProducto(w http.ResponseWriter, r *http.Request) {
+func (a *App) deleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -332,8 +334,8 @@ func (a *App) deleteProducto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u := producto{ID: id}
-	if err := u.deleteProducto(a.DB); err != nil {
+	u := product{ID: id}
+	if err := u.deleteProduct(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -341,34 +343,33 @@ func (a *App) deleteProducto(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-
-//model producto
-type producto struct {
-	ID   int    `json:"id"`
-	CategoriaId  int `json:"categoriaid"`
-    Nombre  string `json:"nombreproducto"`
-    Descripcion  string `json:"descripcionproducto"`
+//model product
+type product struct {
+	ID                  int    `json:"product_id"`
+	Id_Category         int    `json:"id_category"`
+	Name_Product        string `json:"name_product"`
+	Description_Product string `json:"description_product"`
 }
 
-func (u *producto) getProducto(db *sql.DB) error {
-	statement := fmt.Sprintf("SELECT CategoriaId, Nombre, Descripcion FROM productos WHERE id=%d", u.ID)
-	return db.QueryRow(statement).Scan(&u.CategoriaId, &u.Nombre, &u.Descripcion)
+func (u *product) getProduct(db *sql.DB) error {
+	statement := fmt.Sprintf("SELECT Id_Category, Name_Product, Description_Product FROM products WHERE id=%d", u.ID)
+	return db.QueryRow(statement).Scan(&u.Id_Category, &u.Name_Product, &u.Description_Product)
 }
 
-func (u *producto) updateProducto(db *sql.DB) error {
-	statement := fmt.Sprintf("UPDATE productos SET CategoriaId=%d, Nombre='%s', Descripcion='%s' WHERE id=%d", u.CategoriaId, u.Nombre, u.Descripcion, u.ID)
+func (u *product) updateProduct(db *sql.DB) error {
+	statement := fmt.Sprintf("UPDATE products SET Id_Category=%d, Name_Product='%s', Description_Product='%s' WHERE id=%d", u.Id_Category, u.Name_Product, u.Description_Product, u.ID)
 	_, err := db.Exec(statement)
 	return err
 }
 
-func (u *producto) deleteProducto(db *sql.DB) error {
-	statement := fmt.Sprintf("DELETE FROM productos WHERE id=%d", u.ID)
+func (u *product) deleteProduct(db *sql.DB) error {
+	statement := fmt.Sprintf("DELETE FROM products WHERE id=%d", u.ID)
 	_, err := db.Exec(statement)
 	return err
 }
 
-func (u *producto) createProducto(db *sql.DB) error {
-	statement := fmt.Sprintf("INSERT INTO productos(CategoriaId, Nombre, Descripcion) VALUES(%d, '%s', '%s')", u.CategoriaId, u.Nombre, u.Descripcion)
+func (u *product) createProduct(db *sql.DB) error {
+	statement := fmt.Sprintf("INSERT INTO products(Id_Category, Name_Product, Description_Product) VALUES(%d, '%s', '%s')", u.Id_Category, u.Name_Product, u.Description_Product)
 	_, err := db.Exec(statement)
 
 	if err != nil {
@@ -384,8 +385,8 @@ func (u *producto) createProducto(db *sql.DB) error {
 	return nil
 }
 
-func getProductos(db *sql.DB, start, count int) ([]producto, error) {
-	statement := fmt.Sprintf("SELECT id, CategoriaId, Nombre, Descripcion FROM productos LIMIT %d OFFSET %d", count, start)
+func getProducts(db *sql.DB, start, count int) ([]product, error) {
+	statement := fmt.Sprintf("SELECT id, Id_Category, Name_Product, Description_Product FROM products LIMIT %d OFFSET %d", count, start)
 	rows, err := db.Query(statement)
 
 	if err != nil {
@@ -394,15 +395,16 @@ func getProductos(db *sql.DB, start, count int) ([]producto, error) {
 
 	defer rows.Close()
 
-	productos := []producto{}
+	products := []product{}
 
 	for rows.Next() {
-		var u producto
-		if err := rows.Scan(&u.ID, &u.CategoriaId, &u.Nombre, &u.Descripcion); err != nil {
+		var u product
+		if err := rows.Scan(&u.ID, &u.Id_Category, &u.Name_Product, &u.Description_Product); err != nil {
 			return nil, err
 		}
-		productos = append(productos, u)
+		products = append(products, u)
 	}
 
-	return productos, nil
+	return products, nil
 }
+
