@@ -17,11 +17,13 @@ Microservicio de **Perime**. Se encarga de realizar la busquedad de las publicac
 - Introducir la contaseña, por decto del contenedor
 	> password
 - ejecutar las siguientes lineas de código:
-use perime_search_db;
-CREATE TABLE categorys ( id INT AUTO_INCREMENT PRIMARY KEY, Name_Category VARCHAR(50) NOT NULL, Type_Category VARCHAR(50) NOT NULL);
+
+       USE perime_search_db;
+	
+       CREATE TABLE categorys ( id INT AUTO_INCREMENT PRIMARY KEY, Name_Category VARCHAR(50) NOT NULL, Type_Category VARCHAR(50) NOT NULL);
 
 
-CREATE TABLE products ( id INT AUTO_INCREMENT PRIMARY KEY, Id_Category INT NOT NULL, Name_Product 
+       CREATE TABLE products ( id INT AUTO_INCREMENT PRIMARY KEY, Id_Category INT NOT NULL, Name_Product 
 VARCHAR(50) NOT NULL, Description_Product VARCHAR(50) NOT NULL);
 
 ## Operaciones
@@ -30,11 +32,11 @@ Se listraran las operaciones:
 
 |Categoria          |Ruta                        |Metodo                        |
 |----------------|-------------------------------|-----------------------------|
-|Obtener categorias|`/categorias`            |GET            |
-|Crear una categoria          |`/categoria`            |POST          |
-|Obtener una categoria     |`/categoria/{id:[0-9]}`|GET            |
-|Modificar una categoria         |`/categoria/{id:[0-9]}`|PUT           |
-|Eliminar una categoria       |`/categoria/{id:[0-9]}`|DELETE            |
+|Obtener categorias|`/categorys`            |GET            |
+|Crear una categoria          |`/category`            |POST          |
+|Obtener una categoria     |`/category/{id:[0-9]}`|GET            |
+|Modificar una categoria         |`/category{id:[0-9]}`|PUT           |
+|Eliminar una categoria       |`/category/{id:[0-9]}`|DELETE            |
   
 
 
@@ -42,11 +44,11 @@ Se listraran las operaciones:
 
 |Producto         |Ruta                        |Metodo                        |
 |----------------|-------------------------------|-----------------------------|
-|Obtener productos|`/productos`            |GET            |
-|Crear un producto          |`/producto`            |POST          |
-|Obtener un producto   |`/producto/{id:[0-9]}`|GET            |
-|Modificar un producto         |`/producto/{id:[0-9]}`|PUT           |
-|Eliminar un producto      |`/producto/{id:[0-9]}`|DELETE            |
+|Obtener productos|`/products`            |GET            |
+|Crear un producto          |`/product`            |POST          |
+|Obtener un producto   |`/product/{id:[0-9]}`|GET            |
+|Modificar un producto         |`/product/{id:[0-9]}`|PUT           |
+|Eliminar un producto      |`/product/{id:[0-9]}`|DELETE            |
 
 
-Repositorio en mi git personal: https://gitlab.com/kigama/busqueda_perime
+Repositorio en mi git personal: https://gitlab.com/kigama/busqueda_perime v1
