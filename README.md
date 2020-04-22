@@ -1,6 +1,6 @@
-# # busqueda-perime!
+# # perime_seach_db!
 
-Microservicio de **Perime**. Se encarga de realizar la busquedad de las publicaciones con respecto a diferentes parametros
+Microservicio de **Perime**. Se encarga de realizar la busqueda de las publicaciones con respecto a diferentes parametros
 
 
 # Antes de iniciar
@@ -23,8 +23,7 @@ Microservicio de **Perime**. Se encarga de realizar la busquedad de las publicac
        CREATE TABLE categorys ( id INT AUTO_INCREMENT PRIMARY KEY, Name_Category VARCHAR(50) NOT NULL, Type_Category VARCHAR(50) NOT NULL);
 
 
-       CREATE TABLE products ( id INT AUTO_INCREMENT PRIMARY KEY, Id_Category INT NOT NULL, Name_Product 
-VARCHAR(50) NOT NULL, Description_Product VARCHAR(50) NOT NULL);
+       CREATE TABLE products ( id INT AUTO_INCREMENT PRIMARY KEY, Id_Category INT NOT NULL, Name_Product VARCHAR(50) NOT NULL, Description_Product VARCHAR(50) NOT NULL);
 
 ## Operaciones
 
