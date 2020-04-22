@@ -17,19 +17,12 @@ Microservicio de **Perime**. Se encarga de realizar la busquedad de las publicac
 - Introducir la contaseña, por decto del contenedor
 	> password
 - ejecutar las siguientes lineas de código:
-	> CREATE DATABASE busqueda-db;
-use busqueda-db;
-CREATE TABLE  categorias(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    NombreCategoria VARCHAR(50) NOT NULL,
-    TipoCategoria VARCHAR(50) NOT NULL
-);
-CREATE TABLE  productos(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    CategoriaId INT NOT NULL,
-    Nombre VARCHAR(50) NOT NULL,
-    Descripcion VARCHAR(50) NOT NULL
-);
+use perime_search_db;
+CREATE TABLE categorys ( id INT AUTO_INCREMENT PRIMARY KEY, Name_Category VARCHAR(50) NOT NULL, Type_Category VARCHAR(50) NOT NULL);
+
+
+CREATE TABLE products ( id INT AUTO_INCREMENT PRIMARY KEY, Id_Category INT NOT NULL, Name_Product 
+VARCHAR(50) NOT NULL, Description_Product VARCHAR(50) NOT NULL);
 
 ## Operaciones
 
