@@ -13,12 +13,12 @@ Microservicio de **Perime**. Se encarga de realizar la busqueda de las publicaci
 ## Comandos SQL
 
 - Luego de ejecutar el contenedor ejecutar:
-	> docker exec -it perime-busqueda-db mysql -p	
+	> docker exec -it perime-search-db mysql -p	
 - Introducir la contaseña, por decto del contenedor
 	> password
 - ejecutar las siguientes lineas de código:
 
-       USE perime_search_db;
+       USE perime-search-db;
 	
        CREATE TABLE categorys ( id INT AUTO_INCREMENT PRIMARY KEY, Name_Category VARCHAR(50) NOT NULL, Type_Category VARCHAR(50) NOT NULL);
 
