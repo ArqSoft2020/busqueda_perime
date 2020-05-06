@@ -345,7 +345,7 @@ func (a *App) deleteProduct(w http.ResponseWriter, r *http.Request) {
 
 //model product
 type product struct {
-	ID                  int    `json:"product_id"`
+	ID                  int    `json:"id_product"`
 	Id_Category         int    `json:"id_category"`
 	Name_Product        string `json:"name_product"`
 	Description_Product string `json:"description_product"`
