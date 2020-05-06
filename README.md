@@ -1,6 +1,6 @@
 # # perime_seach_db!
 
-Microservicio de **Perime**. Se encarga de realizar la busqueda de las publicaciones con respecto a diferentes parametros
+Microservicio de **Perime**. Se encarga de realizar la busqueda de las publicaciones con respecto a diferentes parametros de categorias y productos
 
 
 # Antes de iniciar
